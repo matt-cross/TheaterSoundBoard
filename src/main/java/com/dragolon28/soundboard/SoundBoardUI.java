@@ -98,9 +98,9 @@ public class SoundBoardUI extends javax.swing.JFrame {
         getContentPane().add(jScrollPane1, gridBagConstraints);
 
         folderChoose.setText("Folder");
-        folderChoose.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                folderChooseMouseClicked(evt);
+        folderChoose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                folderChooseActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -112,9 +112,9 @@ public class SoundBoardUI extends javax.swing.JFrame {
         getContentPane().add(folderChoose, gridBagConstraints);
 
         saveButton.setText("Save Json");
-        saveButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                saveButtonMouseClicked(evt);
+        saveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveButtonActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -126,9 +126,9 @@ public class SoundBoardUI extends javax.swing.JFrame {
         getContentPane().add(saveButton, gridBagConstraints);
 
         loadButton.setText("Load Json");
-        loadButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                loadButtonMouseClicked(evt);
+        loadButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadButtonActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -151,8 +151,22 @@ public class SoundBoardUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void folderChooseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_folderChooseMouseClicked
-         if (soundFolderSelector.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        try {
+            makeJson(jsonName);
+        } catch (IOException ex) {}
+    }//GEN-LAST:event_saveButtonActionPerformed
+
+    private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
+        try {
+            readJson();
+        } catch (IOException ex) {
+            System.getLogger(SoundBoardUI.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
+    }//GEN-LAST:event_loadButtonActionPerformed
+
+    private void folderChooseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_folderChooseActionPerformed
+        if (soundFolderSelector.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
              makeSoundArray(soundFolderSelector.getSelectedFile().getAbsolutePath());
              filepath = soundFolderSelector.getSelectedFile().getAbsolutePath();
              makeButtons();
@@ -163,22 +177,7 @@ public class SoundBoardUI extends javax.swing.JFrame {
              }
              updateJsonName();
          }
-    }//GEN-LAST:event_folderChooseMouseClicked
-
-    private void saveButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveButtonMouseClicked
-        try {
-            makeJson(jsonName);// TODO add your handling code here:
-        } catch (IOException ex) {
-        }
-    }//GEN-LAST:event_saveButtonMouseClicked
-
-    private void loadButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loadButtonMouseClicked
-        try {
-            readJson();
-        } catch (IOException ex) {
-            System.getLogger(SoundBoardUI.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-        }
-    }//GEN-LAST:event_loadButtonMouseClicked
+    }//GEN-LAST:event_folderChooseActionPerformed
     
     private void writeConfig() throws IOException{
         configOut = new PrintStream(configFile);
