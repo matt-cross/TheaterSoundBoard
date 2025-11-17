@@ -3,25 +3,36 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package com.dragolon28.soundboard;
+import java.awt.event.ActionEvent;
 import java.io.*;
+import javafx.scene.media.*;
+import javafx.util.Duration;
+import javax.swing.Timer;
 /**
  *
  * @author zack
  */
-public class SoundEffectButton extends javax.swing.JPanel {
+public class SoundEffectButton extends javax.swing.JPanel implements java.awt.event.ActionListener{
 
     private final File file;
+    private MediaPlayer sound;
+    private Duration time;
+    private Timer timer;
 
     /**
      * Creates new form SoundEffectButton
      * @param file
+     * @param container
+     * @throws java.io.IOException
      */
-    public SoundEffectButton(File file) {
+    public SoundEffectButton(File file, javax.swing.JPanel container) throws IOException {
         initComponents();
         this.file = file;
+        
         soundName.setText(file.getName());
         startPosLabel.setText(startPosSlider.getValue()*0.25+"s");
-        volumeLabel.setText(volumeSlider.getValue()+"%");
+        volumeLabel.setText(volumeSlider.getValue()/2+"%");
+        sound = new MediaPlayer(new Media(file.toURI().toString()));
     }
 
     /**
@@ -48,6 +59,11 @@ public class SoundEffectButton extends javax.swing.JPanel {
         setLayout(new java.awt.GridBagLayout());
 
         playButton.setText("Play");
+        playButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                playButtonActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = 2;
@@ -70,6 +86,8 @@ public class SoundEffectButton extends javax.swing.JPanel {
         gridBagConstraints.ipadx = 4;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
         add(startPosLabel, gridBagConstraints);
+
+        playPos.setValue(100);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 2;
@@ -94,7 +112,7 @@ public class SoundEffectButton extends javax.swing.JPanel {
         startPosSlider.setPaintTicks(true);
         startPosSlider.setSnapToTicks(true);
         startPosSlider.setToolTipText("Start Position");
-        startPosSlider.setValue(4);
+        startPosSlider.setValue(0);
         startPosSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 startPosSliderStateChanged(evt);
@@ -106,6 +124,10 @@ public class SoundEffectButton extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(8, 0, 8, 0);
         add(startPosSlider, gridBagConstraints);
 
+        volumeSlider.setMaximum(200);
+        volumeSlider.setSnapToTicks(true);
+        volumeSlider.setToolTipText("");
+        volumeSlider.setValue(100);
         volumeSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 volumeSliderStateChanged(evt);
@@ -128,13 +150,46 @@ public class SoundEffectButton extends javax.swing.JPanel {
         add(soundName, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == timer){
+            if (sound.getCurrentTime().equals(time)){
+                timer.stop();
+                playPos.setValue(100);
+            }
+            else{
+                playPos.setValue((int) ((sound.getCurrentTime().toMillis()/time.toMillis())*100));
+            }
+        }
+    }
+    
+    
+    private void playSound() {
+        sound.setVolume(((double)volumeSlider.getValue())/200);
+        System.out.println(((double)volumeSlider.getValue())/200);
+        sound.seek(Duration.seconds(((double)startPosSlider.getValue())*0.25));
+        
+        sound.play();
+        time = sound.getTotalDuration();
+        updatePosBar();
+    }
+    
+    private void updatePosBar(){
+        timer = new Timer(20, this);
+        timer.start();
+    }
+    
     private void startPosSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_startPosSliderStateChanged
         startPosLabel.setText(startPosSlider.getValue()*0.25+"s");
     }//GEN-LAST:event_startPosSliderStateChanged
 
     private void volumeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_volumeSliderStateChanged
-        volumeLabel.setText(volumeSlider.getValue()+"%");
+        volumeLabel.setText(volumeSlider.getValue()/2+"%");
     }//GEN-LAST:event_volumeSliderStateChanged
+
+    private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
+        playSound();
+    }//GEN-LAST:event_playButtonActionPerformed
 
     public int[] getValues(){
         return new int[]{startPosSlider.getValue(), volumeSlider.getValue()};

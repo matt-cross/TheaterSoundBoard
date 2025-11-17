@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.*;
 import com.formdev.flatlaf.FlatDarkLaf;
 import java.io.*;
 import java.util.*;
+import javafx.application.Platform;
 import javax.swing.*;
 
 /**
@@ -31,7 +32,6 @@ public class SoundBoardUI extends javax.swing.JFrame {
      */
     public SoundBoardUI() throws IOException{
         initComponents();
-        
         configFile = new File("SoundBoardConfig.txt");
         config = new Scanner(configFile);
         if (config.hasNext()){
@@ -42,9 +42,13 @@ public class SoundBoardUI extends javax.swing.JFrame {
         
         try {
             makeSoundArray(filepath);
-            makeButtons();  
+            Platform.startup(() -> {});
+            makeButtons();
+            System.out.println("made buttons");
         }
-        catch(Exception e){}
+        catch(Exception e){
+            System.getLogger(SoundBoardUI.class.getName()).log(System.Logger.Level.ERROR, (String) null, e);
+        }
         String[] pathWords = filepath.split("/");
         jsonName = pathWords[pathWords.length-1];
         jsonName +=(new File(filepath).listFiles().length);
@@ -188,7 +192,7 @@ public class SoundBoardUI extends javax.swing.JFrame {
     private void makeSoundArray(String path){
         soundArray = new ArrayList<>();
         for (File f : new File(path).listFiles()){
-            if (f.getName().contains(".mp3") || f.getName().contains(".wav")){
+            if (f.getName().contains(".wav") || f.getName().contains(".mp3")){
                 soundArray.add(f);
             }
         }
@@ -266,7 +270,11 @@ public class SoundBoardUI extends javax.swing.JFrame {
         buttons = new SoundEffectButton[soundArray.size()];
         for (int i = 0; i < buttons.length; i++){
             if (soundArray.get(i).getName().contains(".mp3") || soundArray.get(i).getName().contains(".wav")){
-                buttons[i] = new SoundEffectButton(soundArray.get(i));
+                try {
+                    buttons[i] = new SoundEffectButton(soundArray.get(i), jPanel1);
+                } catch (IOException ex) {
+                    System.getLogger(SoundBoardUI.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+                }
                 jPanel1.add(buttons[i]);
             }
         }
