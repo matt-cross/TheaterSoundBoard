@@ -37,14 +37,14 @@ public class SoundBoardUI extends javax.swing.JFrame {
         if (config.hasNext()){
             filepath = config.nextLine();
         } else {filepath = "";}
-        System.out.println("Path: " + filepath);
+        logToApp("Path: " + filepath);
         config.close();
         
         try {
             makeSoundArray(filepath);
             Platform.startup(() -> {});
             makeButtons();
-            System.out.println("made buttons");
+            logToApp("made buttons");
         }
         catch(Exception e){
             System.getLogger(SoundBoardUI.class.getName()).log(System.Logger.Level.ERROR, (String) null, e);
@@ -68,16 +68,22 @@ public class SoundBoardUI extends javax.swing.JFrame {
         java.awt.GridBagConstraints gridBagConstraints;
 
         soundFolderSelector = new javax.swing.JFileChooser();
+        helpPane = new javax.swing.JOptionPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         jPanel1 = new javax.swing.JPanel();
         folderChoose = new javax.swing.JButton();
         saveButton = new javax.swing.JButton();
         loadButton = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        helpButton = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jPanel2 = new javax.swing.JPanel();
+        jTextArea1 = new javax.swing.JTextArea();
 
         soundFolderSelector.setAcceptAllFileFilterUsed(false);
         soundFolderSelector.setCurrentDirectory(new java.io.File("/Users/zack/Documents/Python/Theatre Soundborad"));
         soundFolderSelector.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
+
+        helpPane.setMessage("The \'Folder\' button allows you to choose a folder to pull sounds from.\nThe \'Save Json\' button saves current configuration.\nThe \'Load Json\' button loads the last known configuration for this folder.\n\nThe top button of the sounds tiles plays the sound.\nThe bar below that shows the current position of playback.\nThe slider below that sets a start offset.\nThe slider below that changes the playback volume of a sound.");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Theater SoundBoard");
@@ -85,12 +91,15 @@ public class SoundBoardUI extends javax.swing.JFrame {
         setPreferredSize(new java.awt.Dimension(2000, 1500));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
         jPanel1.setLayout(new java.awt.GridLayout(0, 4));
         jScrollPane1.setViewportView(jPanel1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.gridheight = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.ipadx = 234;
@@ -98,7 +107,6 @@ public class SoundBoardUI extends javax.swing.JFrame {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 72, 0, 0);
         getContentPane().add(jScrollPane1, gridBagConstraints);
 
         folderChoose.setText("Folder");
@@ -112,7 +120,7 @@ public class SoundBoardUI extends javax.swing.JFrame {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 10);
+        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 80);
         getContentPane().add(folderChoose, gridBagConstraints);
 
         saveButton.setText("Save Json");
@@ -126,7 +134,7 @@ public class SoundBoardUI extends javax.swing.JFrame {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 10);
+        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 80);
         getContentPane().add(saveButton, gridBagConstraints);
 
         loadButton.setText("Load Json");
@@ -140,17 +148,45 @@ public class SoundBoardUI extends javax.swing.JFrame {
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 10);
+        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 80);
         getContentPane().add(loadButton, gridBagConstraints);
 
-        jButton4.setText("jButton4");
+        helpButton.setText("Help");
+        helpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                helpButtonActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 10);
-        getContentPane().add(jButton4, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 80);
+        getContentPane().add(helpButton, gridBagConstraints);
+
+        jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane3.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        jScrollPane3.setViewportBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+        jPanel2.setLayout(new java.awt.BorderLayout());
+
+        jTextArea1.setEditable(false);
+        jTextArea1.setColumns(1);
+        jTextArea1.setLineWrap(true);
+        jTextArea1.setRows(10);
+        jTextArea1.setTabSize(1);
+        jTextArea1.setWrapStyleWord(true);
+        jPanel2.add(jTextArea1, java.awt.BorderLayout.SOUTH);
+
+        jScrollPane3.setViewportView(jPanel2);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(jScrollPane3, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -182,6 +218,10 @@ public class SoundBoardUI extends javax.swing.JFrame {
              updateJsonName();
          }
     }//GEN-LAST:event_folderChooseActionPerformed
+
+    private void helpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpButtonActionPerformed
+        helpPane.showMessageDialog(this, "The \'Folder\' button allows you to choose a folder to pull sounds from.\nThe \'Save Json\' button saves current configuration.\nThe \'Load Json\' button loads the last known configuration for this folder.\n\nThe top button of the sounds tiles plays the sound.\nThe bar below that shows the current position of playback.\nThe slider below that sets a start offset.\nThe slider below that changes the playback volume of a sound.", "Help", -1);
+    }//GEN-LAST:event_helpButtonActionPerformed
     
     private void writeConfig() throws IOException{
         configOut = new PrintStream(configFile);
@@ -198,6 +238,12 @@ public class SoundBoardUI extends javax.swing.JFrame {
         }
     }
     
+    public void logToApp(String msg){
+        String console = jTextArea1.getText();
+        console += "\n>"+msg;
+        jTextArea1.setText(console);
+    }
+    
     private void makeJson(String filename) throws IOException{
         updateJsonName();
         
@@ -207,19 +253,19 @@ public class SoundBoardUI extends javax.swing.JFrame {
         File testJson;
         
         try {
-            System.out.println("grabbing file");
+            logToApp("Saving JSON");
             testJson = new File("jsonConfigs/" + filename + ".json");
             if (!testJson.exists())
                 throw new Exception();
         } catch(Exception e){
-            System.out.println("failed to grab file");
+            logToApp("failed to grab file");
             try{
-                System.out.println("tried to make file");
+                logToApp("tried to make file");
             PrintStream jsonMaker = new PrintStream("jsonConfigs/" + filename + ".json");
             jsonMaker.print("");
             jsonMaker.close();
             } catch(Exception ex){
-                System.out.println("failed, making folder");
+                logToApp("failed, making folder");
                 new File("jsonConfigs").mkdir();
                 PrintStream jsonMaker = new PrintStream("jsonConfigs/" + filename + ".json");
                 jsonMaker.print("");
@@ -245,7 +291,7 @@ public class SoundBoardUI extends javax.swing.JFrame {
         try {
             String path = "jsonConfigs/"+jsonName+".json";
             mapper = new ObjectMapper();
-            System.out.println("Reading json: " + path);
+            logToApp("Reading json: " + path);
             JsonNode tree = mapper.readTree(new File(path));
             for (SoundEffectButton button: buttons){
                 button.setVolume(tree.get(button.getPath()).get(0).get(1).asInt());
@@ -254,7 +300,7 @@ public class SoundBoardUI extends javax.swing.JFrame {
             jPanel1.validate();
             jPanel1.repaint();
         } catch (Exception ex) {
-            System.out.println("no appropriate json found, skipping");
+            logToApp("no appropriate json found, skipping");
         }
         
     }
@@ -271,7 +317,7 @@ public class SoundBoardUI extends javax.swing.JFrame {
         for (int i = 0; i < buttons.length; i++){
             if (soundArray.get(i).getName().contains(".mp3") || soundArray.get(i).getName().contains(".wav")){
                 try {
-                    buttons[i] = new SoundEffectButton(soundArray.get(i), jPanel1);
+                    buttons[i] = new SoundEffectButton(soundArray.get(i), this);
                 } catch (IOException ex) {
                     System.getLogger(SoundBoardUI.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
                 }
@@ -319,9 +365,13 @@ public class SoundBoardUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton folderChoose;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JButton helpButton;
+    private javax.swing.JOptionPane helpPane;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JButton loadButton;
     private javax.swing.JButton saveButton;
     private javax.swing.JFileChooser soundFolderSelector;

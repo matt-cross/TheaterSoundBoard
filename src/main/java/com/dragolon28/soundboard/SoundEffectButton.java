@@ -18,6 +18,7 @@ public class SoundEffectButton extends javax.swing.JPanel implements java.awt.ev
     private MediaPlayer sound;
     private Duration time;
     private Timer timer;
+    private SoundBoardUI container;
 
     /**
      * Creates new form SoundEffectButton
@@ -25,13 +26,14 @@ public class SoundEffectButton extends javax.swing.JPanel implements java.awt.ev
      * @param container
      * @throws java.io.IOException
      */
-    public SoundEffectButton(File file, javax.swing.JPanel container) throws IOException {
+    public SoundEffectButton(File file, SoundBoardUI container) throws IOException {
         initComponents();
         this.file = file;
+        this.container = container;
         
         soundName.setText(file.getName());
         startPosLabel.setText(startPosSlider.getValue()*0.25+"s");
-        volumeLabel.setText(volumeSlider.getValue()/2+"%");
+        volumeLabel.setText(volumeSlider.getValue()+"%");
         sound = new MediaPlayer(new Media(file.toURI().toString()));
     }
 
@@ -124,7 +126,6 @@ public class SoundEffectButton extends javax.swing.JPanel implements java.awt.ev
         gridBagConstraints.insets = new java.awt.Insets(8, 0, 8, 0);
         add(startPosSlider, gridBagConstraints);
 
-        volumeSlider.setMaximum(200);
         volumeSlider.setSnapToTicks(true);
         volumeSlider.setToolTipText("");
         volumeSlider.setValue(100);
@@ -165,8 +166,9 @@ public class SoundEffectButton extends javax.swing.JPanel implements java.awt.ev
     
     
     private void playSound() {
-        sound.setVolume(((double)volumeSlider.getValue())/200);
-        System.out.println(((double)volumeSlider.getValue())/200);
+        container.logToApp("Playing sound: " + file.getName());
+        sound.setVolume(((double)volumeSlider.getValue())/100);
+        System.out.println(((double)volumeSlider.getValue())/100);
         sound.seek(Duration.seconds(((double)startPosSlider.getValue())*0.25));
         
         sound.play();
@@ -184,7 +186,7 @@ public class SoundEffectButton extends javax.swing.JPanel implements java.awt.ev
     }//GEN-LAST:event_startPosSliderStateChanged
 
     private void volumeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_volumeSliderStateChanged
-        volumeLabel.setText(volumeSlider.getValue()/2+"%");
+        volumeLabel.setText(volumeSlider.getValue()+"%");
     }//GEN-LAST:event_volumeSliderStateChanged
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
