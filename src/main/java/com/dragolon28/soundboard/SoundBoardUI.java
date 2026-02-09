@@ -44,7 +44,7 @@ public class SoundBoardUI extends javax.swing.JFrame {
             makeSoundArray(filepath);
             Platform.startup(() -> {});
             makeButtons();
-            logToApp("made buttons");
+            logToApp("Made Buttons");
         }
         catch(Exception e){
             System.getLogger(SoundBoardUI.class.getName()).log(System.Logger.Level.ERROR, (String) null, e);
@@ -258,14 +258,14 @@ public class SoundBoardUI extends javax.swing.JFrame {
             if (!testJson.exists())
                 throw new Exception();
         } catch(Exception e){
-            logToApp("failed to grab file");
+            logToApp("Failed to grab file");
             try{
-                logToApp("tried to make file");
+                logToApp("Tried to make file");
             PrintStream jsonMaker = new PrintStream("jsonConfigs/" + filename + ".json");
             jsonMaker.print("");
             jsonMaker.close();
             } catch(Exception ex){
-                logToApp("failed, making folder");
+                logToApp("Failed, making folder");
                 new File("jsonConfigs").mkdir();
                 PrintStream jsonMaker = new PrintStream("jsonConfigs/" + filename + ".json");
                 jsonMaker.print("");
@@ -291,7 +291,7 @@ public class SoundBoardUI extends javax.swing.JFrame {
         try {
             String path = "jsonConfigs/"+jsonName+".json";
             mapper = new ObjectMapper();
-            logToApp("Reading json: " + path);
+            logToApp("Reading JSON: " + jsonName);
             JsonNode tree = mapper.readTree(new File(path));
             for (SoundEffectButton button: buttons){
                 button.setVolume(tree.get(button.getPath()).get(0).get(1).asInt());
@@ -300,7 +300,7 @@ public class SoundBoardUI extends javax.swing.JFrame {
             jPanel1.validate();
             jPanel1.repaint();
         } catch (Exception ex) {
-            logToApp("no appropriate json found, skipping");
+            logToApp("No appropriate JSON found, skipping");
         }
         
     }
