@@ -30,6 +30,7 @@ public class SoundEffectButton extends javax.swing.JPanel implements java.awt.ev
         initComponents();
         this.file = file;
         this.container = container;
+        timer = new Timer(20, this);
         
         soundName.setText(file.getName());
         startPosLabel.setText(startPosSlider.getValue()*0.25+"s");
@@ -157,6 +158,7 @@ public class SoundEffectButton extends javax.swing.JPanel implements java.awt.ev
             if (sound.getCurrentTime().equals(time)){
                 timer.stop();
                 playPos.setValue(100);
+                playButton.setText("Play");
             }
             else{
                 playPos.setValue((int) ((sound.getCurrentTime().toMillis()/time.toMillis())*100));
@@ -164,11 +166,14 @@ public class SoundEffectButton extends javax.swing.JPanel implements java.awt.ev
         }
     }
     
-    
+    public void muted(boolean mute){
+        sound.setMute(mute);
+    }
     private void playSound() {
+        playButton.setText("Stop");
         container.logToApp("Playing sound: " + file.getName());
-        sound.setVolume(((double)volumeSlider.getValue())/100);
-        System.out.println(((double)volumeSlider.getValue())/100);
+        sound.setVolume((((double)volumeSlider.getValue())/100)*(((double)container.volume)/100));
+        System.out.println((((double)volumeSlider.getValue())/100)*(((double)container.volume)/100));
         sound.seek(Duration.seconds(((double)startPosSlider.getValue())*0.25));
         
         sound.play();
@@ -177,7 +182,6 @@ public class SoundEffectButton extends javax.swing.JPanel implements java.awt.ev
     }
     
     private void updatePosBar(){
-        timer = new Timer(20, this);
         timer.start();
     }
     
@@ -190,7 +194,13 @@ public class SoundEffectButton extends javax.swing.JPanel implements java.awt.ev
     }//GEN-LAST:event_volumeSliderStateChanged
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
-        playSound();
+        if(timer.isRunning()){
+            container.logToApp("Stopping Sound");
+            sound.stop();
+            timer.stop();
+            playPos.setValue(100);
+            playButton.setText("Play");
+        } else{playSound();}
     }//GEN-LAST:event_playButtonActionPerformed
 
     public int[] getValues(){
