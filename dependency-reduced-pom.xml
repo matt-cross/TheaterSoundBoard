@@ -25,6 +25,25 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>com.github.akman</groupId>
+        <artifactId>jpackage-maven-plugin</artifactId>
+        <version>0.1.5</version>
+        <configuration>
+          <dest>target/jpackage</dest>
+          <name>SoundBoard</name>
+          <type>IMAGE</type>
+          <input>target</input>
+          <mainjar>SoundBoard-test.jar</mainjar>
+          <mainclass>com.dragolon28.soundboard.SoundBoardUI</mainclass>
+          <appversion>1.0</appversion>
+          <copyright>Copyright (c) Zachary B Cross</copyright>
+          <description>ASD Theater Soundboard</description>
+          <vendor>Octobi28</vendor>
+          <arguments />
+          <javaoptions>--enable-native-access=ALL-UNNAMED</javaoptions>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <properties>

@@ -35,7 +35,8 @@ public class SoundBoardUI extends javax.swing.JFrame {
     public SoundBoardUI() throws IOException{
         initComponents();
         Platform.startup(() -> {});
-        configFile = new File("SoundBoardConfig.txt");
+        String userHomeDir = System.getProperty("user.home");
+        configFile = new File(userHomeDir + java.io.File.separator + "SoundBoardConfig.txt");
         if (!configFile.exists()){
             configFile.createNewFile();
         }
@@ -433,6 +434,7 @@ public class SoundBoardUI extends javax.swing.JFrame {
         FlatDarkLaf.setup();
         java.awt.EventQueue.invokeLater(() -> {
             try {
+		System.out.println("yo here...");
                 new SoundBoardUI().setVisible(true);
             } catch (IOException ex) {
                 System.getLogger(SoundBoardUI.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
