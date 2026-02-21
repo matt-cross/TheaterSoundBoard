@@ -34,7 +34,11 @@ public class SoundBoardUI extends javax.swing.JFrame {
      */
     public SoundBoardUI() throws IOException{
         initComponents();
+        Platform.startup(() -> {});
         configFile = new File("SoundBoardConfig.txt");
+        if (!configFile.exists()){
+            configFile.createNewFile();
+        }
         config = new Scanner(configFile);
         if (config.hasNext()){
             filepath = config.nextLine();
@@ -48,7 +52,6 @@ public class SoundBoardUI extends javax.swing.JFrame {
         
         try {
             makeSoundArray(filepath);
-            Platform.startup(() -> {});
             makeButtons();
             logToApp("Made Buttons");
         }
@@ -57,9 +60,11 @@ public class SoundBoardUI extends javax.swing.JFrame {
         }
         String[] pathWords = filepath.split("/");
         jsonName = pathWords[pathWords.length-1];
-        jsonName +=(new File(filepath).listFiles().length);
-        try{readJson();} catch(IOException e){}
+        if (new File(filepath).listFiles() != null)
+            jsonName +=(new File(filepath).listFiles().length);
+        try{readJson();} catch(Exception e){}
         muted = false;
+        
         
         
     }
@@ -252,6 +257,7 @@ public class SoundBoardUI extends javax.swing.JFrame {
         if (soundFolderSelector.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
              makeSoundArray(soundFolderSelector.getSelectedFile().getAbsolutePath());
              filepath = soundFolderSelector.getSelectedFile().getAbsolutePath();
+             logToApp("Path: " + filepath);
              makeButtons();
              try {
                  writeConfig();
@@ -259,6 +265,7 @@ public class SoundBoardUI extends javax.swing.JFrame {
                  System.getLogger(SoundBoardUI.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
              }
              updateJsonName();
+             
          }
     }//GEN-LAST:event_folderChooseActionPerformed
 
